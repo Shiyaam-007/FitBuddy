@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBuddy - All Users</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Outfit', sans-serif;
+      background: #0d0d0d url('/static/images/gym-bg.jpg') center / cover fixed no-repeat;
+      padding: 30px 16px;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, rgba(15,10,40,0.82) 0%, rgba(5,5,20,0.75) 100%);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative; z-index: 1;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.1);
+      max-width: 1300px; margin: 0 auto;
+      padding: 34px 36px;
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      font-family: 'Bebas Neue', cursive;
+      font-size: 2.8rem;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, #f97316, #facc15, #f97316);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s infinite linear;
+      margin-bottom: 20px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 0% }
+      100% { background-position: 200% }
+    }
+
+    .scroll { overflow-x: auto; border-radius: 14px; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+      background: transparent;
+    }
+    th {
+      background: rgba(249,115,22,0.18);
+      color: #f97316;
+      font-family: 'Bebas Neue', cursive;
+      letter-spacing: 2.5px;
+      font-size: 1rem;
+      padding: 14px 12px;
+      border-bottom: 2px solid rgba(249,115,22,0.35);
+      text-align: left;
+    }
+    td {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 12px;
+      vertical-align: top;
+      text-align: left;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.78);
+      font-weight: 500;
+    }
+    tr:hover td { background: rgba(249,115,22,0.05); }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 240px;
+      overflow-y: auto;
+      font-size: 0.78rem;
+      font-family: 'Outfit', sans-serif;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 10px 12px;
+      border-radius: 10px;
+      min-width: 240px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+    }
+
+    .btn, button {
+      display: inline-block;
+      padding: 9px 18px;
+      color: #fff;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Bebas Neue', cursive;
+      letter-spacing: 2px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 3px 14px rgba(249,115,22,0.35);
+    }
+    .btn:hover, button:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.5); }
+    button.del { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 3px 14px rgba(239,68,68,0.35); }
+    button.del:hover { box-shadow: 0 6px 20px rgba(239,68,68,0.5); }
+
+    .empty {
+      text-align: center;
+      color: rgba(255,255,255,0.35);
+      padding: 50px 30px;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    .top { text-align: center; margin-bottom: 22px; }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(249,115,22,0.4), transparent);
+      margin-bottom: 22px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>👥 ALL USERS &amp; PLANS</h1>
+    <div class="divider"></div>
+    <div class="top"><a class="btn" href="/">← BACK TO HOME</a></div>
+
+    {% if users %}
+    <div class="scroll">
+      <table>
+        <tr>
+          <th>ID</th><th>Name</th><th>Age</th><th>Weight (kg)</th><th>Goal</th>
+          <th>Intensity</th><th>Original Plan</th><th>Updated Plan</th><th>Action</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.age }}</td>
+          <td>{{ user.weight }}</td>
+          <td>{{ user.goal }}</td>
+          <td>{{ user.intensity|capitalize }}</td>
+          <td><pre>{{ user.original_plan }}</pre></td>
+          <td><pre>{{ user.updated_plan }}</pre></td>
+          <td>
+            <form action="/delete-user/{{ user.id }}" method="post"
+                  onsubmit="return confirm('Delete {{ user.name|e }} and their plans?');">
+              <button class="del" type="submit">DELETE</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% else %}
+    <p class="empty">🏋️ No users yet. Generate a plan from the home page first.</p>
+    {% endif %}
+  </div>
+</body>
+</html>
